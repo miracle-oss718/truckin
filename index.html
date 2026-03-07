@@ -1,0 +1,404 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=April+Fatface&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <title>Truckin' Co.</title>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="platform-header">
+        <div class="land-logo">
+    <img src="logo.png" alt="Company Logo">
+  </div>
+    <div class="logo">Truckin' Co.</div>
+    <div class="platform-actions">
+<button id="notif-btn" class="icon-btn"><i class="fa-solid fa-bell"></i></button>
+<button id="profile-btn" class="icon-btn"><i class="fa-solid fa-user"></i></button>
+            <button class="help-btn" onclick="openDashboard('admin-dashboard')">Help</button>
+    </div>
+  </header>
+
+  <!-- Landing Page -->
+  <div class="landing-container">
+     <div class="landing-logo">
+    <img src="logo.png" alt="Company Logo">
+  </div>
+    
+    <h1 class="site-title"><h1>Truckin' Corporation</h1>
+    <div class="card-grid">
+      <div class="card" onclick="openDashboard('buyer-dashboard')">
+        <i class="fa-solid fa-shopping-cart card-icon"></i>
+        <h2>Buyer Dashboard</h2>
+        <p>Request a product and have them delivered to you.</p>
+      </div>
+      <div class="card" onclick="openSellerInner()">
+        <i class="fa-solid fa-box-open card-icon"></i>
+        <h2>Seller Dashboard</h2>
+        <p>Request dispatch, send your product to any destination.</p>
+      </div>
+    </div>
+  </div>
+
+<!-- Buyer Dashboard -->
+<section id="buyer-dashboard" class="dashboard screen hidden">
+  <h2>Buyer Dashboard</h2>
+
+<div class="form-group">
+  <label for="buyer-name">Buyer Name</label>
+  <input type="text" id="buyer-name" placeholder="Enter buyer name" required>
+</div>
+
+<div class="form-group">
+  <label for="product">Product Requested</label>
+  <input type="text" id="product" placeholder="Enter product name" required>
+</div>
+
+<div class="form-group">
+  <label for="buyer-email">Email Address</label>
+  <input type="email" id="buyer-email" placeholder="Enter buyer email" required>
+</div>
+
+<div class="form-group">
+  <label for="seller-email">Seller Email</label>
+  <input type="email" id="seller-email" placeholder="Enter seller email" required>
+</div>
+
+<div class="form-group">
+  <label for="price">Product Price</label>
+  <input type="number" id="price" placeholder="Enter price" required>
+</div>
+
+<div class="form-group">
+  <label for="dropoff-location">Drop-off Location</label>
+  <input type="text" id="dropoff-location" placeholder="Enter drop-off location" required>
+</div>
+
+    <div id="buyer-map" style="width:100%; height:300px; margin-top:10px;"></div>
+
+    <button type="button" id="buyerProceedBtn">Proceed to Payment</button>
+  </form>
+
+  <button onclick="goHome()">← Back</button>
+</section>
+
+  <!-- Buyer Payment -->
+  <section id="payment-section" class="dashboard screen hidden">
+    <h2>Complete Buyer Payment</h2>
+    <form id="payment-form">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" placeholder="Enter full name" required>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="Enter email" required>
+      </div>
+      <div class="form-group">
+        <label>Card Type</label>
+        <input type="text" placeholder="Card type" required>
+      </div>
+      <div class="form-group">
+        <label>Card Number</label>
+        <input type="text" placeholder="1234 5678 9012 3456" required>
+      </div>
+      <button type="submit" class="pay-btn">Pay Now</button>
+    </form>
+    <button onclick="openDashboard('buyer-dashboard')">← Back</button>
+  </section>
+
+  <!-- Seller Inner Dashboard -->
+  <section id="seller-inner-dashboard" class="dashboard screen hidden">
+    <h2>Seller Dashboard</h2>
+    <div class="card-grid">
+      <div class="card" onclick="openProductForm()">
+        <i class="fa-solid fa-tags card-icon"></i>
+        <h2>Description</h2>
+        <p>Describe product before requesting a dispatch</p>
+      </div>
+      <div class="card" onclick="openRequestDispatch()">
+        <i class="fa-solid fa-truck card-icon"></i>
+        <h2>Request a Dispatch</h2>
+        <p>Request a dispatch for your product.</p>
+      </div>
+    </div>
+    <button onclick="backToSeller()">← Back</button>
+  </section>
+
+  <!-- Product Form -->
+  <section id="product-form-dashboard" class="dashboard screen hidden">
+    <h2 style="margin-top:50px;">Description Form</h2>
+    <form id="product-form">
+      <div class="form-group">
+        <label for="product-name">Product Name</label>
+        <input type="text" id="product-name" placeholder="Enter product name" required>
+      </div>
+      <div class="form-group">
+        <label for="product-price">Price</label>
+        <input type="number" id="product-price" placeholder="Enter price" required>
+      </div>
+      <div class="form-group">
+        <label for="product-size">Size</label>
+        <select id="product-size" required>
+          <option value="" disabled selected>Select size</option>
+          <option value="small">Small</option>
+          <option value="medium">Medium</option>
+          <option value="large">Large</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="product-description">Description</label>
+        <textarea id="product-description" rows="6" placeholder="Enter product description" required></textarea>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+    <button onclick="backToSellerInner()">← Back</button>
+  </section>
+
+  <!-- Request Dispatch Form -->
+  <section id="request-dispatch-dashboard" class="dashboard screen hidden">
+    <h2 style="margin-top:50px;">Request a Dispatch</h2>
+    <form id="request-dispatch-form">
+      <div class="form-group">
+        <label for="vehicle-type">Vehicle</label>
+        <select id="vehicle-type">
+          <option value="">Dispatch method</option>
+          <option value="Bike">Truck</option>
+          <option value="Van">Ship</option>
+        </select>
+      </div>
+      <div class="form-group" id="state-group" style="display:none;">
+        <label for="vehicle-state">Select State</label>
+        <select id="vehicle-state">
+          <option value="">-- Choose State --</option>
+          <!-- All 36 states + FCT -->
+          <option value="Lagos">Lagos</option>
+          <option value="Abuja">FCT</option>
+          <!-- ... add all other states ... -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="phone-number">Phone Number</label>
+        <input type="text" id="phone-number" placeholder="Enter your phone number" required>
+      </div>
+      <div class="form-group">
+        <label for="dispatch-dropoff">Drop-off</label>
+        <input type="text" id="dispatch-dropoff" placeholder="Country & State" required>
+      </div>
+      <div class="form-group">
+        <label for="pickup-location">Pickup</label>
+        <input type="text" id="pickup-location" placeholder="Country & State" required>
+        <div id="dispatch-map" style="width:100%; height:280px; margin-top:10px;"></div>
+      </div>
+      <div class="form-group">
+  <label for="dispatchCurrency">Select Currency</label>
+  <select id="dispatchCurrency">
+    <option value="NGN">Naira (₦)</option>
+    <option value="USD">Dollar ($)</option>
+    <option value="GBP">Pound (£)</option>
+    <option value="EUR">Euro (€)</option>
+    <option value="GHS">Cedis (₵)</option>
+    <option value="CNY">Yuan (¥)</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="dispatch-price">Calculated Price</label>
+  <input type="text" id="dispatch-price" readonly>
+</div>
+      <button type="button" id="dispatch-proceed">Proceed to Payment</button>
+    </form>
+    <button onclick="backToSellerInner()">← Back</button>
+  </section>
+
+  <!-- Seller Payment -->
+  <section id="seller-payment-section" class="dashboard screen hidden">
+    <h2>Seller Payment</h2>
+    <form id="seller-payment-form">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" placeholder="Enter full name" required>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="Enter email" required>
+      </div>
+      <div class="form-group">
+        <label>Card Type</label>
+        <input type="text" placeholder="Card type" required>
+      </div>
+      <div class="form-group">
+        <label>Card Number</label>
+        <input type="text" placeholder="1234 5678 9012 3456" required>
+      </div>
+      <button type="submit" class="pay-btn">Pay Now</button>
+    </form>
+    <button onclick="openDashboard('seller-inner-dashboard')">← Back</button>
+  </section>
+
+<!-- Complaint / Auto-Response Chat Panel -->
+<section id="admin-dashboard" class="dashboard screen hidden">
+  <h2>Let us help you!</h2>
+ <button id="clear-chat-btn" title="Clear Chat" style="background:none; border:none; cursor:pointer; color:red;margin-right:-16px; font-size:18px;">
+    <i class="fa-solid fa-trash"></i>
+     </button>
+  <div id="chat-container">
+    <div id="chat-messages"></div>
+    
+    <div id="chat-input-section">
+      <input type="text" id="chat-input" placeholder="How can we help you?..." />
+      <button id="chat-send-btn">
+        <i class="fa fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <button onclick="goHome()">← Back</button>
+</section>
+  
+  <!-- Notifications Panel -->
+<div id="notifications-panel" class="slide-panel right hidden">
+  <h3>Notifications</h3>
+  <div class="notifications-list">
+    <p>No notification yet</p>
+  </div>
+</div>
+
+<!-- Profile Panel -->
+<div id="profile-panel" class="slide-panel right hidden">
+  <h3>Profile</h3>
+  <div class="profile-picture-container">
+    <img src="pro.png" id="profile-picture-display" alt="Profile Picture">
+    <input type="file" id="profile-picture-input" accept="image/*" style="display:none;">
+    <button id="change-picture-btn">Change</button>
+  </div>
+  <form id="profile-form">
+    <div class="form-group">
+      <label for="full-name">Full Name</label>
+      <input type="text" id="full-name" placeholder="Enter full name">
+    </div>
+    <div class="form-group">
+      <label for="user-name">Username</label>
+      <input type="text" id="user-name" placeholder="Enter username">
+    </div>
+    <div class="form-group">
+      <label for="brand-name">Brand Name</label>
+      <input type="text" id="brand-name" placeholder="Enter brand name">
+    </div>
+    <div class="form-group">
+      <label for="brand-desc">Brand Description</label>
+      <textarea id="brand-desc" rows="4" placeholder="Enter brand description"></textarea>
+    </div>
+
+<div class="form-group dob-picker">
+    <div class="form-group">
+      <label>Date of Birth</label>
+      <div class="dob-picker">
+        <select id="dob-day"></select>
+        <select id="dob-month"></select>
+        <select id="dob-year"></select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="profile-email" placeholder="Enter email">
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="text" id="profile-phone" placeholder="Enter phone number">
+    </div>
+    <button type="button" id="save-profile-btn">Save Profile</button>
+  </form>
+</div>
+</div>
+
+<!-- OVERSIGHT LOGIN PANEL (GLOBAL) -->
+<div id="oversight-login-panel" class="side-panel light">
+  <div class="side-panel-header">
+    <h3>Oversight Login</h3>
+    <span id="close-oversight-panel" class="close-btn">&times;</span>
+  </div>
+
+  <form id="oversight-login-form" class="admin-login-form">
+    <input type="text" id="oversight-username" placeholder="Username" required>
+    <input type="password" id="oversight-password" placeholder="Password" required>
+
+    <button type="submit" class="admin-login-btn">Enter Oversight</button>
+
+    <p id="oversight-login-error" class="admin-error hidden">Wrong credentials</p>
+  </form>
+</div>
+
+<!-- OVERSIGHT DASHBOARD -->
+<section id="oversight-dashboard" class="dashboard hidden light">
+  <div class="admin-header">
+    <h2>Oversight Dashboard</h2>
+    <button id="oversight-logout-btn" class="admin-logout-btn">Log out</button>
+  </div>
+
+  <table id="users-table" class="oversight-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Section</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Last Seen</th>
+        <th>Logged In</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Users will populate here -->
+    </tbody>
+  </table>
+</section>
+
+<section id="auth-section" class="dashboard screen hidden">
+  <h2>Create Account / Login</h2>
+
+  <!-- SIGNUP -->
+  <form id="signup-form">
+    <input type="email" id="signup-email" placeholder="Email" required>
+    <input type="password" id="signup-password" placeholder="Password" required>
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <!-- LOGIN -->
+  <form id="login-form">
+    <input type="email" id="login-email" placeholder="Email" required>
+    <input type="password" id="login-password" placeholder="Password" required>
+    <button type="submit">Log In</button>
+  </form>
+
+  <button onclick="openDashboard('landing')">← Back</button>
+</section>
+
+<!-- Include Supabase library first -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>
